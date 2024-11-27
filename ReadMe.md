@@ -11,6 +11,8 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 ```
 
+Votre .env doit ressembler à ça :
+
 ```.env
 OPENAI_API_KEY="your_api_key"
 
@@ -22,4 +24,18 @@ LANGCHAIN_PROJECT="name_of_the_project"
 GOOGLE_MAP_API_KEY="your_api_key"
 ```
 
-Il arrive que le modèle ia disease_prediction ne foncionne plus bien. Relancer le code
+Il arrive que le modèle ia disease_prediction ne foncionne plus bien. Relancer le code entier dans disease_prediction_model.ipynb (le modèle n'est pas si long à recréer 30 secondes chez moi), vérifiez avant que les lignes de codes pour sauver le modèle ne sont pas en commentaire. Une fois terminé deux fichiers disease_prediction_model.pkl et label_encoder.pkl ont été créé, déplacez les dans le dossier models et supprimer les anciens fichiers
+
+## Lancer le modèle
+
+Ouvre deux terminal Launch the API app by running:
+
+```bash
+uvicorn app:app --reload
+```
+
+Et lance l'ui avec :
+
+```bash
+streamlit run ui.py
+```
