@@ -1,18 +1,22 @@
 """
-lauch the api app by running : uvicorn app:app --reload
+Main application for running the disease prediction API.
+
+Launch the app with: uvicorn app:app --reload
 """
 
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import joblib
-import numpy as np
+from typing import Dict, List
+
 import pandas as pd
+import joblib
+
+from dotenv import load_dotenv
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_openai import ChatOpenAI
-
-from dotenv import load_dotenv
 
 from tools.disease_description_tool import disease_description
 from tools.disease_precautions_tool import disease_precautions
@@ -20,48 +24,51 @@ from tools.find_nearest_doctor_tool import find_nearest_doctor
 from tools.predict_disease_tool import predict_disease
 from tools.utils import get_accepted_symptoms
 
-# Charger les variables d'environnement
+# Load environment variables
 load_dotenv()
 
-# LangSmith
+# Initialize FastAPI application
+app = FastAPI()
+
+# Add CORS middleware to allow communication from Streamlit or external tools
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Set up LangSmith tracing (optional)
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 
-# Initialisation
-app = FastAPI()
-
-
-# Charger les modèles et les données
+# Load paths for models and datasets
 model_path = "../models/disease_prediction_model.pkl"
 encoder_path = "../models/label_encoder.pkl"
-precaution_df = pd.read_csv('../datasets/symptom_precaution.csv')
-# Transform the 'Disease' column to be standarised
-precaution_df["Disease"] = precaution_df["Disease"].str.lower().str.strip().str.replace(" ", "_")
-
 dataset_file_path = "../datasets/dataset.csv"
-accepted_symptoms, accepted_symptoms_with_spaces = get_accepted_symptoms(dataset_file_path)
+precaution_file_path = "../datasets/symptom_precaution.csv"
 
-symptoms_list_str = ", ".join(accepted_symptoms_with_spaces)
-
-
-
-
+# Load model and encoder
 ia_model = joblib.load(model_path)
 label_encoder = joblib.load(encoder_path)
 
+# Load accepted symptoms from the dataset
+accepted_symptoms, accepted_symptoms_with_spaces = get_accepted_symptoms(dataset_file_path)
 
+# Create a string representation of symptoms for system messaging
+symptoms_list_str = ", ".join(accepted_symptoms_with_spaces)
 
-# Configurer LangChain
+# LangChain setup
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-llm = ChatOpenAI(model="gpt-3.5-turbo")
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)          # temperature control the randomness of the response. Low temperature makes the model deterministic.
 memory = MemorySaver()
 
-
-
+# Register tools with LangChain
 tools = [predict_disease, disease_description, disease_precautions, find_nearest_doctor]
 
-
-system_message = """
+# Define system instructions for the LangChain agent
+system_message = f"""
     You are a helpful assistant trained to assist users with health-related queries. Your primary goals are as follows:
 
     ### Goal 1: Predict Diseases Based on Symptoms
@@ -73,9 +80,9 @@ system_message = """
     - Do not call the tool unless all symptoms in the input are valid and match the list after transformation. Do not ask user confirmation.
 
     - Once a disease is predicted:
-      1. Inform the user of the predicted disease.
-      2. Use the "disease_description" tool to provide a description of the predicted disease.
-      3. Use the "disease_precautions" tool to suggest precautions for the predicted disease.
+      1. Inform the user of the predicted disease with the certainty.
+      2. Use the "disease_description" tool to provide a description of the predicted disease. Inform the user of the description.
+      3. Use the "disease_precautions" tool to suggest precautions for the predicted disease. Inform the user of the precautions.
 
     - If no disease is found or the confidence level of prediction is too low, politely inform the user and ask for additional symptoms to improve the prediction.
 
@@ -106,7 +113,7 @@ system_message = """
     1. User provides symptoms: "I have a  loss of balance, Headache, and I am tired."
     - Transform symptoms to match the list: "loss of balance, Headache, tired" → ["loss_of_balance", "headache", "fatigue"]
     - Use "predict_disease" to predict the disease and inform the user with the result.
-    - If a disease is predicted, inform the user and use "disease_description" and "disease_precautions" to give detailed information. Then, ask the user for their location to suggest the nearest doctor using "find_nearest_doctor."
+    - If a disease is predicted, inform the user of the disease he has and the certainty. Then use "disease_description" and "disease_precautions" to provide the description and the precautions. Then, ask the user for their location to suggest the nearest doctor using "find_nearest_doctor."
     - If a disease is not predicted, ask the user for more symptoms AND their location to suggest the nearest doctor.
 
     2. User says: "Find a doctor near me."
@@ -120,55 +127,58 @@ system_message = """
     - Be concise and clear in your responses to the user.
     - Always adapt your responses to the language used in the user's query.
 """
+
+# Create the LangChain agent executor
 langgraph_agent_executor = create_react_agent(llm, tools, state_modifier=system_message, checkpointer=memory)
 
-# Endpoint de prédiction
-class SymptomsRequest(BaseModel):
-    symptoms: list[str]
+# Class for incoming prediction requests
+class UserInputRequest(BaseModel):
+    user_input: List[str]
 
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, List
-
-# Ajout d'un middleware pour autoriser les requêtes depuis Streamlit
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Stockage temporaire en mémoire pour les conversations
+# In-memory conversation storage
 session_histories: Dict[str, List[Dict[str, str]]] = {}
 
-# Endpoint de prédiction avec gestion d'historique
+# API Routes
+@app.get("/")
+def root():
+    """
+    Health check endpoint for the API.
+    """
+    return {"message": "Welcome to the disease prediction API!"}
+
 @app.post("/predict_disease/")
-def predict_disease_endpoint(request: SymptomsRequest, session_id: str):
+def predict_disease_endpoint(request: UserInputRequest, session_id: str):
+    """
+    Predict the disease based on symptoms provided by the user.
+
+    Args:
+        request (SymptomsRequest): User-provided symptoms.
+        session_id (str): Unique identifier for the user session.
+
+    Returns:
+        dict: Predicted disease and conversation history.
+    """
     try:
-        # Récupérer l'historique pour cette session, ou initialiser s'il n'existe pas
+        # Initialize session history if not already present
         if session_id not in session_histories:
             session_histories[session_id] = []
 
-        # Ajouter le nouveau message utilisateur à l'historique
-        session_histories[session_id].append({"role": "user", "content": f"{', '.join(request.symptoms)}"})
+        # Add user input to session history
+        session_histories[session_id].append({"role": "user", "content": ", ".join(request.user_input)})
 
-        # Construire les messages à partir de l'historique
+        # Construct messages from session history
         messages = session_histories[session_id]
 
-        # Obtenir la réponse de l'agent LangChain
+        # Get LangChain agent response
         response = langgraph_agent_executor.invoke(
             {"messages": messages},
-            {"configurable": {"thread_id": session_id, "checkpoint_ns": "default"}}
+            {"configurable": {"thread_id": session_id, "checkpoint_ns": "default"}},
         )
-        # Ajouter la réponse du chatbot à l'historique
+
+        # Append assistant's response to session history
         session_histories[session_id].append({"role": "assistant", "content": response["messages"][-1].content})
 
+        # Return prediction and conversation history
         return {"prediction": response["messages"][-1].content, "history": session_histories[session_id]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-
-# Endpoint de test
-@app.get("/")
-def root():
-    return {"message": "Bienvenue dans l'application de prédiction de maladies basée sur des symptômes."}

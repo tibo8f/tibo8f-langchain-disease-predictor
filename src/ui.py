@@ -1,12 +1,22 @@
-"""streamlit run ui.py"""
+"""
+Streamlit-based User Interface for LangChain Disease Prediction System.
+
+Launch the app using the command: `streamlit run ui.py`
+
+This UI allows users to interact with the LangChain-based assistant by entering any input text.
+The application communicates with a FastAPI backend for processing and maintains a session-based
+conversation history to ensure a seamless user experience.
+"""
+
 import streamlit as st
 import requests
 import uuid
 
-# Title of the application
-st.title("Disease Prediction Based on Symptoms")
+# --- Application Title ---
+st.title("Health Assistant")
 
-# Generate a unique session ID for each user
+# --- Session Management ---
+# Generate a unique session ID for each user (used for backend session tracking)
 if "session_id" not in st.session_state:
     st.session_state["session_id"] = str(uuid.uuid4())
 
@@ -14,31 +24,38 @@ if "session_id" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state["history"] = []
 
-# Input field for symptoms
-symptoms = st.text_input("Enter your symptoms:")
+# --- User Input Section ---
+# Input field for the user to enter text
+user_input = st.text_input("Enter your symptoms to find out what disease you might have, or provide your address to locate the nearest doctor :")
 
-# Predict button logic
-if st.button("Predict"):
+# --- Predict Button Logic ---
+if st.button("Send"):
     try:
-        # Send a POST request to the API with the session ID
+        # Send the user's input to the FastAPI backend
         response = requests.post(
-            f"http://127.0.0.1:8000/predict_disease/",
-            json={"symptoms": [sym.strip() for sym in symptoms.split(",")]},
+            url="http://127.0.0.1:8000/predict_disease/",
+            json={"user_input": [user_input.strip()]},
             params={"session_id": st.session_state["session_id"]},
         )
 
-        # Check the response status
+        # Process the API response
         if response.status_code == 200:
             data = response.json()
-            # Update the local history with the new messages
+            # Update the session history with new messages from the backend
             st.session_state["history"] = data["history"]
         else:
-            st.error(f"Error: {response.text}")
+            # Display an error message if the backend returns an error
+            st.error(f"Error from API: {response.text}")
     except Exception as e:
+        # Handle exceptions that might occur during the API request
         st.error(f"Error during the request: {str(e)}")
 
-# Display the conversation history
+# --- Display Conversation History ---
+# Display the conversation history between the user and the assistant
 st.write("### Conversation History:")
 for message in st.session_state["history"]:
+    # Distinguish between user and assistant roles in the conversation
     role = "User" if message["role"] == "user" else "Assistant"
     st.markdown(f"**{role}:** {message['content']}")
+
+
