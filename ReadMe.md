@@ -40,3 +40,8 @@ Et lance l'ui avec :
 ```bash
 streamlit run ui.py
 ```
+
+# How to use the system
+
+- you provide symptoms
+- you can ask for the description or the precautions to take
