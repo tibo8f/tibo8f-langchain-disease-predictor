@@ -2,7 +2,7 @@ import pandas as pd
 from langchain_core.tools import tool
 
 # Charger les datasets nécessaires
-precaution_df = pd.read_csv('./datasets/symptom_precaution.csv')
+precaution_df = pd.read_csv('../datasets/symptom_precaution.csv')
 
 # Transformer la colonne "Disease" pour uniformiser les noms
 precaution_df["Disease"] = (

@@ -29,6 +29,7 @@ Il arrive que le modèle ia disease_prediction ne foncionne plus bien. Relancer 
 ## Lancer le modèle
 
 Ouvre deux terminal Launch the API app by running:
+Aller dans le dossier src et lancer les commandes :
 
 ```bash
 uvicorn app:app --reload

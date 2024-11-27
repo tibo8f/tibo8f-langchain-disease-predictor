@@ -7,8 +7,8 @@ from langchain_core.tools import tool
 from tools.utils import get_accepted_symptoms
 
 # Charger les modèles nécessaires
-model_path = "./models/disease_prediction_model.pkl"
-encoder_path = "./models/label_encoder.pkl"
+model_path = "../models/disease_prediction_model.pkl"
+encoder_path = "../models/label_encoder.pkl"
 ia_model = joblib.load(model_path)
 label_encoder = joblib.load(encoder_path)
 
@@ -18,7 +18,7 @@ with open('symptom_columns.pkl', 'rb') as f:
 
 # Charger la liste des symptômes acceptés
 
-file_path = "./datasets/dataset.csv"
+file_path = "../datasets/dataset.csv"
 accepted_symptoms, accepted_symptoms_with_spaces = get_accepted_symptoms(file_path)
 
 @tool

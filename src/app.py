@@ -11,11 +11,9 @@ import pandas as pd
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_openai import ChatOpenAI
-from langchain_core.tools import tool
-from dotenv import load_dotenv
-import re
 
-import requests
+from dotenv import load_dotenv
+
 from tools.disease_description_tool import disease_description
 from tools.disease_precautions_tool import disease_precautions
 from tools.find_nearest_doctor_tool import find_nearest_doctor
@@ -34,13 +32,13 @@ app = FastAPI()
 
 
 # Charger les modèles et les données
-model_path = "./models/disease_prediction_model.pkl"
-encoder_path = "./models/label_encoder.pkl"
-precaution_df = pd.read_csv('./datasets/symptom_precaution.csv')
+model_path = "../models/disease_prediction_model.pkl"
+encoder_path = "../models/label_encoder.pkl"
+precaution_df = pd.read_csv('../datasets/symptom_precaution.csv')
 # Transform the 'Disease' column to be standarised
 precaution_df["Disease"] = precaution_df["Disease"].str.lower().str.strip().str.replace(" ", "_")
 
-dataset_file_path = "./datasets/dataset.csv"
+dataset_file_path = "../datasets/dataset.csv"
 accepted_symptoms, accepted_symptoms_with_spaces = get_accepted_symptoms(dataset_file_path)
 
 symptoms_list_str = ", ".join(accepted_symptoms_with_spaces)

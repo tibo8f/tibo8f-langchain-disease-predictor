@@ -2,7 +2,7 @@ import pandas as pd
 from langchain_core.tools import tool
 
 # Charger les datasets nécessaires
-description_df = pd.read_csv('./datasets/symptom_Description.csv')
+description_df = pd.read_csv('../datasets/symptom_Description.csv')
 
 # Transformer la colonne "Disease" pour uniformiser les noms
 description_df["Disease"] = (
