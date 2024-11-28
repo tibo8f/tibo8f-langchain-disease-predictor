@@ -51,8 +51,9 @@ This project is a disease prediction system built with **LangChain**, neural net
 
    ```bach
    cd src
-
-   # OR
+   ```
+   Or:
+   ```bach
    cd tibo8f-langchain-disease-predictor/src
    ```
 
