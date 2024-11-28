@@ -1,6 +1,6 @@
 # AI-Driven Disease Prediction LangChain Assistant
 
-This project is a disease prediction system built with **LangChain**, neural networks, and **Google Maps API**, designed to improve healthcare accessibility and efficiency. The system predicts diseases based on user-reported symptoms, provides descriptions and recommended precautions, and locates the nearest healthcare provider.
+This project is a disease prediction system built with **LangChain**, neural networks, and Google Maps API, designed to improve healthcare accessibility and efficiency. The system predicts diseases based on user-reported symptoms, provides descriptions and recommended precautions, and locates the nearest healthcare provider.
 
 ![Project Banner](./assests/banner.png)
 
