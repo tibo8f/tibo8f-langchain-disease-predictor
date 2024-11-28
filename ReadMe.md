@@ -178,15 +178,14 @@ This architecture ensures accurate disease predictions while maintaining computa
 If disease predictions are inaccurate, retrain the model:
 
 1. Open `disease_prediction_model.ipynb` in the `src` folder.
-2. Run all cells to:
+2. "Run all cells, it will automatically:
    - Load and preprocess the dataset.
    - Train the model for 50 epochs.
-3. Save the updated model and label encoder:
+   - Save the updated model and label encoder. Make sure these lines of code are not commented out:
    ```python
    joblib.dump(model, '../models/disease_prediction_model.pkl')
    joblib.dump(label_encoder, '../models/label_encoder.pkl')
    ```
-4. Replace the old `.pkl` files in the `models` directory.
 
 ---
 
