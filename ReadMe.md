@@ -6,23 +6,6 @@ This project is a disease prediction system built with **LangChain**, neural net
 
 ---
 
-## 📖 **Features**
-
-1. **Disease Prediction**
-
-   - Predicts diseases based on user-reported symptoms using a trained neural network.
-   - Provides a confidence score for each prediction.
-
-2. **Detailed Medical Information**
-
-   - Descriptions of the diagnosed disease.
-   - Precautions to take based on the disease.
-
-3. **Find the Nearest Doctor**
-
-   - Leverages Google Maps API to locate and recommend the closest doctor.
----
-
 ## 🚀 **Getting Started**
 
 ### **Requirements**
@@ -86,6 +69,24 @@ This project is a disease prediction system built with **LangChain**, neural net
    ```
 
 4. Access the application in your browser: [http://localhost:8501](http://localhost:8501).
+
+---
+
+## 📖 **Features**
+
+1. **Disease Prediction**
+
+   - Predicts diseases based on user-reported symptoms using a trained neural network.
+   - Provides a confidence score for each prediction.
+
+2. **Detailed Medical Information**
+
+   - Descriptions of the diagnosed disease.
+   - Precautions to take based on the disease.
+
+3. **Find the Nearest Doctor**
+
+   - Leverages Google Maps API to locate and recommend the closest doctor.
 
 ---
 
@@ -313,7 +314,7 @@ Thank you for taking the time to explore this project! 😊
 
 **Note:** Previously, to use LangSmith, the following lines were added to app.py. While LangSmith now works without them, if you encounter issues, adding these lines may help resolve the problem:
 
-   ```python
-   os.environ["LANGCHAIN_TRACING_V2"] = "true"
-   os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-   ```
+```python
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+```
