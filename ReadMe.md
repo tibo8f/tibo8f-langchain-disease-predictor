@@ -21,8 +21,6 @@ This project is a disease prediction system built with **LangChain**, neural net
 3. **Find the Nearest Doctor**
 
    - Leverages Google Maps API to locate and recommend the closest doctor.
-   - Provides contact details for healthcare professionals.
-
 ---
 
 ## 🚀 **Getting Started**
