@@ -2,7 +2,7 @@
 
 This project is a disease prediction system built with **LangChain**, neural networks, and **Google Maps API**, designed to improve healthcare accessibility and efficiency. The system predicts diseases based on user-reported symptoms, provides descriptions and recommended precautions, and locates the nearest healthcare provider.
 
-![Project Banner](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/banner.png)
+![Project Banner](./assests/banner.png)
 
 ---
 
@@ -23,16 +23,13 @@ This project is a disease prediction system built with **LangChain**, neural net
    - Leverages Google Maps API to locate and recommend the closest doctor.
    - Provides contact details for healthcare professionals.
 
-4. **Interactive User Interface**
-   - Built with **Streamlit** for seamless interactions.
-
 ---
 
 ## 🚀 **Getting Started**
 
 ### **Requirements**
 
-- Python >= 3.9
+- Python >= 3.9 and <3.12, I used version 3.11.15
 - OpenAI API Key for disease prediction: [Get one here](https://platform.openai.com/signup/).
 - Google Cloud API Key for locating doctors: [Sign up for free trial](https://cloud.google.com/).
 - Optional: LangSmith API Key for tracking agent interactions: [Learn more](https://www.langchain.com/langsmith).
@@ -46,21 +43,19 @@ This project is a disease prediction system built with **LangChain**, neural net
    cd tibo8f-langchain-disease-predictor
    ```
 
-2. **Install Dependencies**
-
-   Use `pip` to install the required Python libraries:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Add API Keys**  
+2. **Add API Keys**  
    Create a `.env` file in the root directory and add your API keys:
 
    ```env
+   # This is the API key for OpenAI
    OPENAI_API_KEY="your_openai_api_key"
+
+   # Google Cloud API key for accessing Maps API
    GOOGLE_MAP_API_KEY="your_google_map_api_key"
+
+   # LangSmith tracing setup (optional)
    LANGCHAIN_TRACING_V2=true
+   LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
    LANGCHAIN_API_KEY="your_langsmith_api_key"
    LANGCHAIN_PROJECT="your_project_name"
    ```
@@ -78,15 +73,22 @@ This project is a disease prediction system built with **LangChain**, neural net
 
 ### **Launching the Application**
 
-1. Open two terminals.
+1. Open two terminals and go into the src folder if you are not already in it:
+
+   ```bach
+   cd src
+
+   # OR
+   cd tibo8f-langchain-disease-predictor/src
+   ```
+
 2. In the first terminal, start the backend FastAPI service:
 
    ```bash
-   cd src
    uvicorn app:app --reload
    ```
 
-3. In the second terminal, start the user interface:
+3. In the second terminal, start the user interface :
 
    ```bash
    streamlit run ui.py
@@ -96,104 +98,225 @@ This project is a disease prediction system built with **LangChain**, neural net
 
 ---
 
-## 🛠 **Key Components**
+## 🌍 **Supporting Sustainable Development Goal (SDG) 3**
 
-### **1. Backend System**
+This project aligns with **SDG 3: Good Health and Well-being**, which aims to promote health and well-being for all ages. It addresses two critical targets:
 
-The backend processes user inputs to predict diseases, fetch descriptions, recommend precautions, and locate nearby doctors.
+1. **Target 3.4**  
+   _"Reduce premature mortality from non-communicable diseases through prevention and treatment."_  
+   The system helps detect diseases early, enabling users to take timely action.
 
-- **`app.py`**: Main API logic.
-- **`tools/`**: Modular tools for different tasks like prediction, description fetching, etc.
-
-![Backend Architecture](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/backend_diagram.png)
-
-### **2. User Interface**
-
-The front-end is built using **Streamlit** to provide a simple and interactive user experience.
-
-![Streamlit UI](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/ui_screenshot.png)
-
-### **3. Neural Network Model**
-
-The trained neural network predicts diseases with high accuracy.  
-**Structure**:
-
-- Input Layer: 132 nodes (symptoms).
-- Hidden Layers: 128 and 64 neurons.
-- Output Layer: 41 nodes (diseases).
-
-Model files:
-
-- `disease_prediction_model.pkl`
-- `label_encoder.pkl`
+2. **Target 3.d**  
+   _"Strengthen early warning and risk management for global health."_  
+   By providing disease predictions and locating nearby doctors, the system supports underserved regions with limited healthcare resources.
 
 ---
 
-## 🔄 **Updating the Model**
+### 📌 **How the System Contributes**
 
-If disease predictions are inaccurate, retrain the neural network:
-
-1. Open `disease_prediction_model.ipynb` in your Jupyter Notebook or Colab.
-2. Run all the cells to preprocess data and retrain the model.
-3. Save the updated model (`disease_prediction_model.pkl` and `label_encoder.pkl`).
-4. Replace the old files in the `/models` directory.
+- **Accessibility**: Available online and works in any language with internet access.
+- **Early Diagnosis**: Helps identify potential illnesses and guides users to appropriate care.
+- **Equity**: Provides critical health information to reduce disparities in underserved areas.
+- **Efficiency**: Minimizes unnecessary doctor visits by helping users self-assess their symptoms.
 
 ---
 
-## 🖼 **Screenshots**
+This project is not a substitute for medical professionals but serves as a valuable tool for initial symptom assessment and healthcare guidance.
 
-### **Disease Prediction**
+## 🧠 **The AI Tool**
 
-![Disease Prediction](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/disease_prediction.png)
-
-### **Finding the Nearest Doctor**
-
-![Find Doctor](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/find_doctor.png)
+The AI tool is the core component of this system, built to predict diseases based on user-reported symptoms. It leverages a trained neural network to provide a disease diagnosis along with a confidence score.
 
 ---
 
-## 📊 **Dataset**
+### 📊 **Dataset and Preprocessing**
 
-The system uses a dataset with 132 symptoms and 41 diseases.  
-Source: [Kaggle Disease Dataset](https://www.kaggle.com/datasets/itachi9604/disease-symptom-description-dataset)
+The AI model is trained on a Kaggle dataset with **4,920 rows** and **17 columns**, representing up to 17 symptoms for 41 diseases. To prepare the data for accurate predictions, the following steps were taken:
 
----
+- **Standardizing Data**: Unified inconsistent symptom names (e.g., `"dischromic patches"` → `"dischromic_patches"`).
+- **One-Hot Encoding**: Transformed symptoms into a binary format (1 = present, 0 = absent).
+- **Duplicate Removal**: Removed 4,616 duplicates while retaining incomplete rows to improve generalization.
 
-## 🌿 **Environmental Impact**
-
-- **Minimal Training Energy**: Training uses just 16 seconds on a Mac M1, consuming ~3.11 mg CO₂.
-- **Google Maps API**: Each query emits ~19.17 mg CO₂.
-- **OpenAI API**: Each call emits ~4.32g CO₂.
-
-![Energy Usage](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/environmental_impact.png)
+After preprocessing, the dataset was reduced to **304 unique rows** and **132 symptoms**, each mapped to one of **41 diseases**.
 
 ---
 
-## 🔍 **Troubleshooting**
+### 🕸️ **Neural Network Architecture**
 
-### Common Issues
+The neural network was designed to recognize patterns in the data and assign confidence levels to predictions. It consists of:
 
-1. **KeyError for symptoms**: Ensure user inputs match symptom names in the dataset.
-2. **Missing .env file**: Make sure API keys are added to the `.env` file.
-3. **Streamlit Errors**: Check Python version and ensure all dependencies are installed.
+- **Input Layer**: A binary vector with 132 inputs (one per symptom).
+- **Hidden Layers**:
+  - **Layer 1**: 128 neurons (ReLU activation), chosen to match the dataset complexity.
+  - **Layer 2**: 64 neurons (ReLU activation), focusing on key patterns.
+- **Output Layer**: 41 neurons (softmax activation), one for each disease, providing a probability distribution.
 
-### Contact
-
-For issues, create a GitHub issue or email `your-email@example.com`.
-
----
-
-## 🙌 **Contributions**
-
-Contributions are welcome! Please open an issue or submit a pull request.
+This architecture ensures accurate disease predictions while maintaining computational efficiency.
 
 ---
 
-## 🏆 **Acknowledgments**
+### 🔍 **Performance and Confidence**
 
-This project supports **Sustainable Development Goal (SDG) 3: Good Health and Well-being**, aiming to reduce inequalities in healthcare access.
+- **Training Results**: Initial simpler models (e.g., smaller hidden layers) failed to capture the dataset's complexity. Using two hidden layers (128 and 64 neurons) achieved **100% accuracy** during training and cross-validation. However, achieving 100% accuracy strongly suggests that the model is **overfitting**. In real-world scenarios, symptoms often overlap between multiple diseases, and the system should not be able to always predict the correct disease with absolute certainty. This level of accuracy likely indicates that the model has memorized the training data rather than learning generalizable patterns, reducing its effectiveness in handling unseen or ambiguous symptom sets.
 
-![SDG 3](https://github.com/tibo8f/tibo8f-langchain-disease-predictor/assets/sdg3.png)
+- **Confidence Scores**: The model provides a certainty percentage for each prediction. If confidence is below **75%**, the system prompts users for additional symptoms to improve accuracy.
 
-- Built by **Thibaut François** as part of a Master’s AI Project.
-- Special thanks to [LangChain](https://www.langchain.com/) for their powerful tools.
+**Example of Certainty of Predictions:**
+
+| **Disease Predicted** | **Symptoms Provided**                                   | **Certainty** |
+| --------------------- | ------------------------------------------------------- | ------------- |
+| Fungal infection      | Skin rash, itching, nodal eruptions, dischromic patches | 99.91%        |
+| Fungal infection      | Skin rash, itching, nodal eruptions                     | 98.37%        |
+| Fungal infection      | Skin rash, itching                                      | 60.18%        |
+| Fungal infection      | Skin rash                                               | 30.22%        |
+| Fungal infection      | Itching                                                 | 20.89%        |
+
+---
+
+### ⚙️ **Re-training the Neural Network**
+
+If disease predictions are inaccurate, retrain the model:
+
+1. Open `disease_prediction_model.ipynb` in the `src` folder.
+2. Run all cells to:
+   - Load and preprocess the dataset.
+   - Train the model for 50 epochs.
+3. Save the updated model and label encoder:
+   ```python
+   joblib.dump(model, '../models/disease_prediction_model.pkl')
+   joblib.dump(label_encoder, '../models/label_encoder.pkl')
+   ```
+4. Replace the old `.pkl` files in the `models` directory.
+
+---
+
+## 🗂️ Search in Database Tools
+
+To enhance the disease prediction process, I implemented two complementary tools to provide additional information after a disease has been identified:
+
+1. **Disease Description Tool**:
+
+   - Retrieves a concise description of the identified disease.
+   - Uses the dataset [`symptom_Description.csv`](./datasets/symptom_Description.csv), which contains two columns:
+     - `Disease`: The name of the disease.
+     - `Description`: A brief explanation of the disease.
+
+2. **Disease Precaution Tool**:
+   - Suggests precautions to take for the identified disease.
+   - Uses the dataset [`symptom_precaution.csv`](./datasets/symptom_precaution.csv), which includes:
+     - `Disease`: The name of the disease.
+     - `Precaution_1` to `Precaution_4`: Four recommended actions to mitigate the condition.
+
+### Dataset Standardization
+
+To ensure smooth communication between tools, disease names were standardized by converting them to lowercase, removing extra spaces, and replacing spaces with underscores (e.g., `"Heart Attack"` → `"heart_attack"`). This eliminated naming inconsistencies and improved query reliability.
+
+---
+
+## 📍 Google Maps API Tool
+
+The Google Maps API Tool connect users with the nearest healthcare provider.
+
+**How It Works:**
+
+1. **User Location Input**: The system prompts the user to provide their location.
+2. **Geocoding API**: Converts the user’s location into latitude and longitude coordinates.
+3. **Places API**: Searches for nearby "doctor" locations and ranks results by proximity using the `rankby=distance` parameter.
+4. **Doctor Information**: Retrieves the name, address, and phone number of the closest doctor and shares it with the user.
+
+---
+
+## 🧠 Memory Integration
+
+The system uses **MemorySaver** to remember past interactions, ensuring all previously shared symptoms are considered during disease prediction. This allows the agent to request additional symptoms when needed.
+![Project Banner](./assests/memory.png)
+
+---
+
+## ✍️ Prompt Engineering
+
+Effective prompt design ensured the agent utilized tools correctly and provided coherent responses. Key improvements included:
+
+- **Tool Prioritization:** Adjusted the prompt to ensure tools are used in the correct sequence, prioritizing disease prediction before providing descriptions or precautions.
+- **Language Consistency:** Standardized all outputs to English and added instructions for the agent to match the user's language.
+- **Interpreting Tool Outputs:** Reformulated responses so the agent processes and integrates tool outputs into natural replies instead of copying them verbatim.
+- **Symptom Validation:** Enforced validation and transformation of user-provided symptoms to match the expected format, e.g., "out of breath" → "breathlessness."
+- **Tool Enforcement:** Explicitly prohibited disease predictions without calling the `predict_disease` tool.
+
+---
+
+## 💡 Proof of Concept
+
+This section showcases a typical interaction with the LangChain-based system, highlighting its functionality through three main phases: symptom input, disease prediction, and follow-up with medical guidance and doctor location.
+![Project Banner](./assests/user_history.png)
+
+---
+
+### **Step 1: Symptom Input and Initial Prediction**
+
+The user begins by providing symptoms, such as:  
+`"I have a headache and feel dizzy."`
+
+The system processes the input, extracting and normalizing symptoms for compatibility with the `predict_disease` tool (e.g., transforming "dizzy" to "dizziness"). The tool attempts to predict a disease but may report insufficient certainty when the symptoms provided are too general.
+
+In this scenario, the system:
+
+- **Requests additional symptoms** to improve the prediction.
+- **Asks for the user’s location** in preparation for locating a doctor if no disease can be confidently identified.
+  ![Project Banner](./assests/Step1.png)
+
+---
+
+### **Step 2: Adding Symptoms for Accurate Prediction**
+
+Next, the user provides more details, such as:  
+`"I also have a lack of concentration."`
+
+The system, using its memory capabilities, combines this new input with the previous symptoms to form a complete symptom set:  
+`["headache", "dizziness", "lack_of_concentration"]`
+
+With this updated input, the system:
+
+- Successfully predicts **Hypertension** with a confidence level of 98.21%.
+- Retrieves additional information using the `disease_description` and `disease_precautions` tools.
+- Shares a detailed description of the disease along with specific precautions, such as practicing meditation and reducing stress.
+
+## ![Project Banner](./assests/Step2.png)
+
+### **Step 3: Finding the Nearest Doctor**
+
+Finally, the user provides their location, for instance:  
+`"I’m in front of the Palais de Justice in Brussels."`
+
+The system forwards the location to the `find_nearest_doctor` tool, which interacts with the Google Maps API to:
+
+- Convert the address into geographic coordinates.
+- Search for the nearest healthcare professional.
+- Return the doctor’s name, address, and phone number.
+
+The user receives actionable guidance, completing the interaction with both medical insights and direct access to professional care.
+
+![Project Banner](./assests/Step3.png)
+
+---
+
+## 🌱 **Environmental Impact**
+
+### **Training Emissions**
+
+- **Duration**: 16 seconds (including preprocessing).
+- **Energy Consumption**: ~7 Watts.
+- **Carbon Footprint**: 3.11 mg CO2.
+
+### **API Calls**
+
+- **ChatGPT**: 12.96 g CO2 per interaction.
+- **Google Maps API**: 19.17 mg CO2 per interaction.
+
+## 👤 Author
+
+This project was developed by **Thibaut** as part of a Master's course in Artificial Intelligence (MA2).
+
+Thank you for taking the time to explore this project! 😊
+
+**GitHub:** [tibo8f](https://github.com/tibo8f)
