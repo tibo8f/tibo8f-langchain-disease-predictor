@@ -1,7 +1,7 @@
 """
 Main application for running the disease prediction API.
 
-Launch the app with: uvicorn app:app --reload
+Launch the backend API: uvicorn app:app --reload
 """
 
 import os

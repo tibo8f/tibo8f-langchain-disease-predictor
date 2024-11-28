@@ -69,6 +69,42 @@ This project is a disease prediction system built with **LangChain**, neural net
 
 ---
 
+## 🚀 How to Use It?
+
+### Example Interaction:
+
+1. **Provide Symptoms:**  
+    Start by describing your symptoms to the AI, such as:  
+    _"I have a headache"_
+   ![First chat interaction](./assests/Setp1Chat.png)
+2. **Follow-Up for More Accuracy:**  
+    If the AI's confidence is below 75%, it will ask for additional symptoms. Provide them:  
+    _"I also feel dizzy"_
+   If the certainty is enough, the system will predict the disease, give its description, and suggest precautions.
+   ![Second chat interaction](./assests/Step2Chat.png)
+
+3. **Find the Nearest Doctor:**  
+    Share your location to locate the closest doctor:  
+    _"I'm in front of the Palais de Justice in Brussels."_
+   ![Third chat interaction](./assests/Step3Chat.png)
+
+### Notes:
+
+1. **System Memory:**  
+   The AI remembers previous symptoms in the conversation, so you don’t need to repeat them. However, if you overload it with unrelated symptoms, the AI may struggle to make an accurate prediction. Refresh the page to reset the system's memory and start fresh.
+
+2. **Limited Scope:**
+
+   - The AI recognizes **41 diseases** and **131 symptoms.** There’s a chance your disease or symptoms may not be in the system's dataset.
+   - Check the dataset [`dataset.csv`](./datasets/dataset.csv) for an overview of the diseases and symptoms covered.
+
+3. **Symptom Requirement:**  
+   On average, the AI needs **3 to 4 valid symptoms** to predict a disease accurately. If it can’t identify your condition, consult the dataset to provide common symptoms associated with the disease you suspect.
+
+   _"I have a headache and feel dizzy, I also have a lack of concentration and loss of balance"_
+
+---
+
 ## 📖 **Features**
 
 1. **Disease Prediction**
@@ -120,7 +156,7 @@ The AI tool is the core component of this system, built to predict diseases base
 
 ### 📊 **Dataset and Preprocessing**
 
-The AI model is trained on a Kaggle dataset with **4,920 rows** and **17 columns**, representing up to 17 symptoms for 41 diseases. To prepare the data for accurate predictions, the following steps were taken:
+The AI model is trained on a Kaggle dataset ([`dataset.csv`](./datasets/dataset.csv))with **4,920 rows** and **17 columns**, representing up to 17 symptoms for 41 diseases. To prepare the data for accurate predictions, the following steps were taken:
 
 - **Standardizing Data**: Unified inconsistent symptom names (e.g., `"dischromic patches"` → `"dischromic_patches"`).
 - **One-Hot Encoding**: Transformed symptoms into a binary format (1 = present, 0 = absent).

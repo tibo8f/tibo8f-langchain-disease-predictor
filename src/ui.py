@@ -1,7 +1,7 @@
 """
 Streamlit-based User Interface for LangChain Disease Prediction System.
 
-Launch the app using the command: `streamlit run ui.py`
+Launch the user interface using the command: `streamlit run ui.py`
 
 This UI allows users to interact with the LangChain-based assistant by entering any input text.
 The application communicates with a FastAPI backend for processing and maintains a session-based
