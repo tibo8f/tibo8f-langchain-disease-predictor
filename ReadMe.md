@@ -51,19 +51,16 @@ This project is a disease prediction system built with **LangChain**, neural net
 
    ```bach
    cd src
-   ```
-   Or:
-   ```bach
-   cd tibo8f-langchain-disease-predictor/src
+   #OR: cd tibo8f-langchain-disease-predictor/src
    ```
 
-2. In the first terminal, start the backend FastAPI service:
+2. In the first terminal, go in the src folder and start the backend FastAPI service:
 
    ```bash
    uvicorn app:app --reload
    ```
 
-3. In the second terminal, start the user interface :
+3. In the second terminal, go in the src folder and start the user interface :
 
    ```bash
    streamlit run ui.py
