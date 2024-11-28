@@ -58,13 +58,6 @@ This project is a disease prediction system built with **LangChain**, neural net
    LANGCHAIN_PROJECT="your_project_name"
    ```
 
-   **Note:** If you choose not to use LangSmith, remove the following lines from `app.py`:
-
-   ```python
-   os.environ["LANGCHAIN_TRACING_V2"] = "true"
-   os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
-   ```
-
 ---
 
 ## 🔧 **Usage**
@@ -317,3 +310,10 @@ This project was developed by **Thibaut** as part of a Master's course in Artifi
 Thank you for taking the time to explore this project! 😊
 
 **GitHub:** [tibo8f](https://github.com/tibo8f)
+
+**Note:** Previously, to use LangSmith, the following lines were added to app.py. While LangSmith now works without them, if you encounter issues, adding these lines may help resolve the problem:
+
+   ```python
+   os.environ["LANGCHAIN_TRACING_V2"] = "true"
+   os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
+   ```
